@@ -1,41 +1,48 @@
 package ru.hogwarts.school.service;
 
 import org.springframework.stereotype.Service;
-import ru.hogwarts.school.exceptions.StudentAlreadyExistException;
+import ru.hogwarts.school.exceptions.StudentNotFoundException;
 import ru.hogwarts.school.model.Student;
+import ru.hogwarts.school.repository.StudentRepository;
 
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
 
 @Service
 public class StudentService {
-    private Map<Long, Student> studentMap = new HashMap<>();
-    private Long idCounter = 1L;
+    private final StudentRepository studentRepository;
+
+    public StudentService(StudentRepository studentRepository) {
+        this.studentRepository = studentRepository;
+    }
 
     public Student createStudent(Student student) {
-        if (studentMap.containsKey(student.getId())) {
-            throw new StudentAlreadyExistException();
-        }
-        studentMap.put(idCounter, student);
-        idCounter++;
-        return student;
+        return studentRepository.save(student);
     }
 
     public Student getStudent(Long studentId) {
-        return studentMap.get(studentId);
+        return this.studentRepository.findById(studentId)
+                .orElseThrow(StudentNotFoundException::new);
+
     }
 
     public Student updateStudent(Long studentId, Student student) {
-        studentMap.put(studentId, student);
-        return student;
+        Student dbStudent =
+                this.studentRepository.findById(studentId).orElseThrow(StudentNotFoundException::new);
+        dbStudent.setName(student.getName());
+        dbStudent.setAge(student.getAge());
+        return this.studentRepository.save(dbStudent);
     }
 
-    public Student deleteStudent(Long studentId) {
-        return studentMap.remove(studentId);
+    public void deleteStudent(Long studentId) {
+        this.studentRepository.deleteById(studentId);
     }
 
     public Collection<Student> getAllStudents() {
-        return studentMap.values();
+        return this.studentRepository.findAll();
+
+    }
+
+    public Collection<Student> getStudentsByAge(int age){
+        return this.studentRepository.findByAge(age);
     }
 }
