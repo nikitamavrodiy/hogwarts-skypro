@@ -47,4 +47,10 @@ public class FacultyService {
         return this.facultyRepository.findByColor(color);
     }
 
+    public Faculty findByNameOrColor(String nameOrColor) {
+        return this.facultyRepository
+                .findByNameIgnoreCaseOrColorIgnoreCase(nameOrColor, nameOrColor)
+                .orElseThrow(FacultyNotFoundException::new);
+    }
+
 }

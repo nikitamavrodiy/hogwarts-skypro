@@ -44,6 +44,11 @@ public class FacultyController {
 
     }
 
+    @GetMapping("/search/{searchString}")
+    public Faculty findFacultyByNameOrColor(@PathVariable("searchString") String searchString) {
+        return this.facultyService.findByNameOrColor(searchString);
+    }
+
     @PutMapping("/update/{facultyId}")
     public ResponseEntity<Faculty> updateFaculty(@PathVariable Long facultyId, @RequestBody Faculty faculty) {
         return ResponseEntity.ok(facultyService.updateFaculty(facultyId, faculty));
