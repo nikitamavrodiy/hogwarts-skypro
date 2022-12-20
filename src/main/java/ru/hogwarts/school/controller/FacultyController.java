@@ -4,9 +4,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.hogwarts.school.exceptions.FacultyNotFoundException;
 import ru.hogwarts.school.model.Faculty;
+import ru.hogwarts.school.model.Student;
 import ru.hogwarts.school.service.FacultyService;
 
 import java.util.Collection;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/faculty")
@@ -31,6 +33,11 @@ public class FacultyController {
     @GetMapping("{facultyId}")
     public ResponseEntity<Faculty> getFaculty(@PathVariable Long facultyId) {
         return ResponseEntity.ok(facultyService.getFaculty(facultyId));
+    }
+
+    @GetMapping("/studentsOf/{facultyId}")
+    public ResponseEntity<Collection<Student>> getStudentsByFaculty(@PathVariable Long facultyId) {
+        return ResponseEntity.ok(facultyService.getFaculty(facultyId).getStudents());
     }
 
     @GetMapping("/filterByColor/{color}")
