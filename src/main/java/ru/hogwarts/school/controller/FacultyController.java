@@ -2,7 +2,7 @@ package ru.hogwarts.school.controller;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.hogwarts.school.exceptions.FacultyAlreadyExistException;
+import ru.hogwarts.school.exceptions.FacultyNotFoundException;
 import ru.hogwarts.school.model.Faculty;
 import ru.hogwarts.school.service.FacultyService;
 
@@ -17,9 +17,9 @@ public class FacultyController {
         this.facultyService = facultyService;
     }
 
-    @ExceptionHandler(FacultyAlreadyExistException.class)
+    @ExceptionHandler(FacultyNotFoundException.class)
     public ResponseEntity<String> handleException() {
-        return ResponseEntity.badRequest().body("Факультет с таким id уже создан");
+        return ResponseEntity.badRequest().body("Факультетов с заданными параметрами не найдено");
     }
 
     @PostMapping
@@ -30,42 +30,28 @@ public class FacultyController {
 
     @GetMapping("{facultyId}")
     public ResponseEntity<Faculty> getFaculty(@PathVariable Long facultyId) {
-        Faculty faculty = facultyService.getFaculty(facultyId);
-        if (faculty == null) {
-            return ResponseEntity.notFound().build();
-        }
-        return ResponseEntity.ok(faculty);
+        return ResponseEntity.ok(facultyService.getFaculty(facultyId));
     }
 
-    @GetMapping("/filter/{color}")
-    public ResponseEntity<Collection<Faculty>> findFaculties(@PathVariable String color) {
-        Collection<Faculty> faculties = facultyService.getAllFaculties()
-                .stream().filter(faculty -> faculty.getColor().equals(color))
-                .toList();
-        if (faculties.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
-        return ResponseEntity.ok(faculties);
+    @GetMapping("/filterByColor/{color}")
+    public ResponseEntity<Collection<Faculty>> findFacultiesByColor(@PathVariable String color) {
+        return ResponseEntity.ok(facultyService.getFacultiesByColor(color));
     }
 
     @GetMapping("/all")
-    public ResponseEntity<Collection<Faculty>> getAllFaculties() {
-        Collection<Faculty> allFaculties = facultyService.getAllFaculties();
-        if (allFaculties.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
-        return ResponseEntity.ok(allFaculties);
+    public Collection<Faculty> getAllFaculties() {
+        return facultyService.getAllFaculties();
+
     }
 
-    @PutMapping()
-    public ResponseEntity<Faculty> updateFaculty(@RequestBody Faculty faculty) {
-        Faculty updatedFaculty = facultyService.updateFaculty(faculty.getId(), faculty);
-        return ResponseEntity.ok(updatedFaculty);
+    @PutMapping("/update/{facultyId}")
+    public ResponseEntity<Faculty> updateFaculty(@PathVariable Long facultyId, @RequestBody Faculty faculty) {
+        return ResponseEntity.ok(facultyService.updateFaculty(facultyId, faculty));
     }
 
     @DeleteMapping("{facultyId}")
-    public ResponseEntity<Faculty> deleteFaculty(@PathVariable Long facultyId) {
+    public ResponseEntity<String> deleteFaculty(@PathVariable Long facultyId) {
         Faculty deletedFaculty = facultyService.deleteFaculty(facultyId);
-        return ResponseEntity.ok(deletedFaculty);
+        return ResponseEntity.ok().body("Факультет с айди " + deletedFaculty.getId() + " удален");
     }
 }

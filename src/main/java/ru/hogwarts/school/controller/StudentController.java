@@ -2,7 +2,6 @@ package ru.hogwarts.school.controller;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.hogwarts.school.exceptions.StudentAlreadyExistException;
 import ru.hogwarts.school.model.Student;
 import ru.hogwarts.school.service.StudentService;
 
@@ -17,11 +16,6 @@ public class StudentController {
         this.studentService = studentService;
     }
 
-    @ExceptionHandler(StudentAlreadyExistException.class)
-    public ResponseEntity<String> handleException() {
-        return ResponseEntity.badRequest().body("Студент с таким id уже создан");
-    }
-
     @PostMapping
     public ResponseEntity<Student> createStudent(@RequestBody Student student) {
         Student createdStudent = studentService.createStudent(student);
@@ -30,42 +24,29 @@ public class StudentController {
 
     @GetMapping("{studentId}")
     public ResponseEntity<Student> getStudent(@PathVariable Long studentId) {
-        Student student = studentService.getStudent(studentId);
-        if (student == null) {
-            return ResponseEntity.notFound().build();
-        }
-        return ResponseEntity.ok(student);
+        return ResponseEntity.ok(studentService.getStudent(studentId));
     }
 
-    @GetMapping("/filter/{age}")
-    public ResponseEntity<Collection<Student>> findStudents(@PathVariable int age) {
-        Collection<Student> students = studentService.getAllStudents()
-                .stream().filter(student -> student.getAge() == age)
-                .toList();
-        if (students.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
-        return ResponseEntity.ok(students);
+    @GetMapping("/filterByAge/{age}")
+    public ResponseEntity<Collection<Student>> findStudentsByAge(@PathVariable int age) {
+        return ResponseEntity.ok(studentService.getStudentsByAge(age));
     }
 
     @GetMapping("/all")
-    public ResponseEntity<Collection<Student>> getAllStudents() {
-        Collection<Student> allStudents = studentService.getAllStudents();
-        if (allStudents.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
-        return ResponseEntity.ok(allStudents);
+    public Collection<Student> getAllStudents() {
+        return studentService.getAllStudents();
+
     }
 
-    @PutMapping()
-    public ResponseEntity<Student> updateStudent(@RequestBody Student student) {
-        Student updatedStudent = studentService.updateStudent(student.getId(), student);
-        return ResponseEntity.ok(updatedStudent);
+    @PutMapping("/update/{studentId}")
+    public ResponseEntity<Student> updateStudent(@PathVariable Long studentId, @RequestBody Student student) {
+        return ResponseEntity.ok(studentService.updateStudent(studentId, student));
     }
 
     @DeleteMapping("{studentId}")
-    public ResponseEntity<Student> deleteStudent(@PathVariable Long studentId) {
-        Student deletedStudent = studentService.deleteStudent(studentId);
-        return ResponseEntity.ok(deletedStudent);
+    public ResponseEntity<String> deleteStudent(@PathVariable Long studentId) {
+        studentService.deleteStudent(studentId);
+        return ResponseEntity.ok().body("Студент с айди " + studentId + " удален");
     }
+
 }
