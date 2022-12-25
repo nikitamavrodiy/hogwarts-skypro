@@ -1,7 +1,9 @@
 package ru.hogwarts.school.controller;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 import ru.hogwarts.school.model.Faculty;
 import ru.hogwarts.school.model.Student;
 import ru.hogwarts.school.service.StudentService;
@@ -9,6 +11,7 @@ import ru.hogwarts.school.service.StudentService;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/student")
@@ -21,8 +24,10 @@ public class StudentController {
 
     @PostMapping
     public ResponseEntity<Student> createStudent(@RequestBody Student student) {
-        Student createdStudent = studentService.createStudent(student);
-        return ResponseEntity.ok(createdStudent);
+        if (student.getId() != null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Id must be empty!");
+        }
+        return ResponseEntity.status(HttpStatus.CREATED).body(studentService.createStudent(student));
     }
 
     @GetMapping("{studentId}")
@@ -30,21 +35,21 @@ public class StudentController {
         return ResponseEntity.ok(studentService.getStudent(studentId));
     }
 
-    @GetMapping("/filterByAge/{age}")
-    public ResponseEntity<Collection<Student>> getStudentsByAge(@PathVariable int age) {
-        return ResponseEntity.ok(studentService.getStudentsByAge(age));
+    @GetMapping(params = {"age"})
+    public Set<Student> findStudentsByAge(@RequestParam(required = false) int age) {
+        return (Set<Student>) studentService.getStudentsByAge(age);
     }
 
-    @GetMapping("/age/between")
-    public Collection<Student> findStudentsByAge(
-            @RequestParam("minAge") int minAge, @RequestParam("maxAge") int maxAge) {
-        return this.studentService.findStudentsByAge(minAge, maxAge);
+    @GetMapping(params = {"minAge", "maxAge"})
+    public Set<Student> findByAgeBetween(
+            @RequestParam(required = false) int minAge,
+            @RequestParam(required = false) int maxAge) {
+        return (Set<Student>) this.studentService.findStudentsByAge(minAge, maxAge);
     }
 
     @GetMapping("/all")
     public Collection<Student> getAllStudents() {
         return studentService.getAllStudents();
-
     }
 
     @GetMapping("/facultyOf/{studentId}")

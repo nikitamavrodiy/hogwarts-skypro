@@ -15,7 +15,6 @@ public class Faculty {
     private String color;
 
     @OneToMany(mappedBy = "faculty")
-    @JsonManagedReference
     private Set<Student> students;
 
     public Long getId() {
