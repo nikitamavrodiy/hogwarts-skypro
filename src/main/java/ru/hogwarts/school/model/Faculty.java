@@ -15,6 +15,7 @@ public class Faculty {
     private String color;
 
     @OneToMany(mappedBy = "faculty")
+    @JsonManagedReference
     private Set<Student> students;
 
     public Long getId() {
@@ -54,14 +55,15 @@ public class Faculty {
         return Objects.hash(id, name, color);
     }
 
-    @Override
-    public String toString() {
-        return "Faculty{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", color='" + color + '\'' +
-                '}';
-    }
+//    @Override
+//    public String toString() {
+//        return "Faculty{" +
+//                "id=" + id +
+//                ", name='" + name + '\'' +
+//                ", color='" + color + '\'' +
+//                ", students=" + students +
+//                '}';
+//    }
 
     public Set<Student> getStudents() {
         return students;

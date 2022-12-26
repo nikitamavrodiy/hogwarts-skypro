@@ -32,19 +32,19 @@ public class StudentController {
 
     @GetMapping("{studentId}")
     public ResponseEntity<Student> getStudent(@PathVariable Long studentId) {
-        return ResponseEntity.ok(studentService.getStudent(studentId));
+        return ResponseEntity.ok().body(studentService.getStudent(studentId));
     }
 
     @GetMapping(params = {"age"})
-    public Set<Student> findStudentsByAge(@RequestParam(required = false) int age) {
-        return (Set<Student>) studentService.getStudentsByAge(age);
+    public Collection<Student> findStudentsByAge(@RequestParam(required = false) int age) {
+        return studentService.getStudentsByAge(age);
     }
 
     @GetMapping(params = {"minAge", "maxAge"})
-    public Set<Student> findByAgeBetween(
+    public Collection<Student> findByAgeBetween(
             @RequestParam(required = false) int minAge,
             @RequestParam(required = false) int maxAge) {
-        return (Set<Student>) this.studentService.findStudentsByAge(minAge, maxAge);
+        return this.studentService.findStudentsByAge(minAge, maxAge);
     }
 
     @GetMapping("/all")
@@ -53,8 +53,8 @@ public class StudentController {
     }
 
     @GetMapping("/facultyOf/{studentId}")
-    public ResponseEntity<String> getStudentFaculty(@PathVariable Long studentId) {
-        return ResponseEntity.ok("Cтудент с id="+studentId+" числится на факультете "+studentService.getStudent(studentId).getFaculty().getId());
+    public Faculty getStudentFaculty(@PathVariable Long studentId) {
+        return studentService.getStudent(studentId).getFaculty();
     }
 
     @PutMapping("/update/{studentId}")
