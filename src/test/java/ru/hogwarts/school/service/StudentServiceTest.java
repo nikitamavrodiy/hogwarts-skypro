@@ -1,4 +1,4 @@
-package ru.hogwarts.school;
+package ru.hogwarts.school.service;
 
 public class StudentServiceTest {
 //    StudentService studentService;
