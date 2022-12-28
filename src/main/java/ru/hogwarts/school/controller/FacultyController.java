@@ -2,8 +2,9 @@ package ru.hogwarts.school.controller;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.hogwarts.school.exceptions.FacultyNotFoundException;
+import ru.hogwarts.school.exceptions.ObjectNotFoundException;
 import ru.hogwarts.school.model.Faculty;
+import ru.hogwarts.school.model.Student;
 import ru.hogwarts.school.service.FacultyService;
 
 import java.util.Collection;
@@ -17,7 +18,7 @@ public class FacultyController {
         this.facultyService = facultyService;
     }
 
-    @ExceptionHandler(FacultyNotFoundException.class)
+    @ExceptionHandler(ObjectNotFoundException.class)
     public ResponseEntity<String> handleException() {
         return ResponseEntity.badRequest().body("Факультетов с заданными параметрами не найдено");
     }
@@ -33,6 +34,11 @@ public class FacultyController {
         return ResponseEntity.ok(facultyService.getFaculty(facultyId));
     }
 
+    @GetMapping("/studentsOf/{facultyId}")
+    public ResponseEntity<Collection<Student>> getStudentsByFaculty(@PathVariable Long facultyId) {
+        return ResponseEntity.ok(facultyService.getFaculty(facultyId).getStudents());
+    }
+
     @GetMapping("/filterByColor/{color}")
     public ResponseEntity<Collection<Faculty>> findFacultiesByColor(@PathVariable String color) {
         return ResponseEntity.ok(facultyService.getFacultiesByColor(color));
@@ -42,6 +48,11 @@ public class FacultyController {
     public Collection<Faculty> getAllFaculties() {
         return facultyService.getAllFaculties();
 
+    }
+
+    @GetMapping("/search/{searchString}")
+    public Faculty findFacultyByNameOrColor(@PathVariable("searchString") String searchString) {
+        return this.facultyService.findByNameOrColor(searchString);
     }
 
     @PutMapping("/update/{facultyId}")

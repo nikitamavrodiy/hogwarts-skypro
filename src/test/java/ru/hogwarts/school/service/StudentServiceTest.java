@@ -1,15 +1,4 @@
-package ru.hogwarts.school;
-
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import ru.hogwarts.school.exceptions.StudentNotFoundException;
-import ru.hogwarts.school.model.Student;
-import ru.hogwarts.school.service.StudentService;
-
-import java.util.List;
-
-import static org.assertj.core.api.Assertions.*;
+package ru.hogwarts.school.service;
 
 public class StudentServiceTest {
 //    StudentService studentService;

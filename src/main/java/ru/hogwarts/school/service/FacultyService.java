@@ -1,7 +1,7 @@
 package ru.hogwarts.school.service;
 
 import org.springframework.stereotype.Service;
-import ru.hogwarts.school.exceptions.FacultyNotFoundException;
+import ru.hogwarts.school.exceptions.ObjectNotFoundException;
 import ru.hogwarts.school.model.Faculty;
 import ru.hogwarts.school.repository.FacultyRepository;
 
@@ -21,12 +21,12 @@ public class FacultyService {
 
     public Faculty getFaculty(Long facultyId) {
         return this.facultyRepository.findById(facultyId)
-                .orElseThrow(FacultyNotFoundException::new);
+                .orElseThrow(ObjectNotFoundException::new);
     }
 
     public Faculty updateFaculty(Long facultyId, Faculty faculty) {
         Faculty dbFaculty = this.facultyRepository.findById(facultyId)
-                .orElseThrow(FacultyNotFoundException::new);
+                .orElseThrow(ObjectNotFoundException::new);
         dbFaculty.setName(faculty.getName());
         dbFaculty.setColor(faculty.getColor());
         return this.facultyRepository.save(dbFaculty);
@@ -34,7 +34,7 @@ public class FacultyService {
 
     public Faculty deleteFaculty(Long facultyId) {
         Faculty dbFaculty = this.facultyRepository.findById(facultyId)
-                .orElseThrow(FacultyNotFoundException::new);
+                .orElseThrow(ObjectNotFoundException::new);
         this.facultyRepository.delete(dbFaculty);
         return dbFaculty;
     }
@@ -45,6 +45,12 @@ public class FacultyService {
 
     public Collection<Faculty> getFacultiesByColor(String color) {
         return this.facultyRepository.findByColor(color);
+    }
+
+    public Faculty findByNameOrColor(String nameOrColor) {
+        return this.facultyRepository
+                .findByNameIgnoreCaseOrColorIgnoreCase(nameOrColor, nameOrColor)
+                .orElseThrow(ObjectNotFoundException::new);
     }
 
 }
