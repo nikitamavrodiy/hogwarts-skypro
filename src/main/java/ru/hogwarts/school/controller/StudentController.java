@@ -1,9 +1,12 @@
 package ru.hogwarts.school.controller;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
+import ru.hogwarts.school.dto.FacultyDTO;
+import ru.hogwarts.school.dto.StudentDTO;
 import ru.hogwarts.school.model.Faculty;
 import ru.hogwarts.school.model.Student;
 import ru.hogwarts.school.service.StudentService;
@@ -23,49 +26,47 @@ public class StudentController {
     }
 
     @PostMapping
-    public ResponseEntity<Student> createStudent(@RequestBody Student student) {
-        if (student.getId() != null) {
+    public StudentDTO createStudent(@RequestBody StudentDTO studentDTO) {
+        if (studentDTO.getId() != null) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Id must be empty!");
         }
-        return ResponseEntity.status(HttpStatus.CREATED).body(studentService.createStudent(student));
+        return studentService.createStudent(studentDTO);
     }
 
-    @GetMapping("{studentId}")
-    public ResponseEntity<Student> getStudent(@PathVariable Long studentId) {
-        return ResponseEntity.ok().body(studentService.getStudent(studentId));
+    @GetMapping("/{studentId}")
+    public StudentDTO getStudent(@PathVariable Long studentId) {
+        return studentService.getStudent(studentId);
     }
 
     @GetMapping(params = {"age"})
-    public Collection<Student> findStudentsByAge(@RequestParam(required = false) int age) {
+    public Collection<StudentDTO> findStudentsByAge(@RequestParam(required = false) int age) {
         return studentService.getStudentsByAge(age);
     }
 
     @GetMapping(params = {"minAge", "maxAge"})
-    public Collection<Student> findByAgeBetween(
+    public Collection<StudentDTO> findByAgeBetween(
             @RequestParam(required = false) int minAge,
             @RequestParam(required = false) int maxAge) {
         return this.studentService.findStudentsByAge(minAge, maxAge);
     }
 
     @GetMapping("/all")
-    public Collection<Student> getAllStudents() {
+    public Collection<StudentDTO> getAllStudents() {
         return studentService.getAllStudents();
     }
 
-    @GetMapping("/facultyOf/{studentId}")
-    public Faculty getStudentFaculty(@PathVariable Long studentId) {
-        return studentService.getStudent(studentId).getFaculty();
+    @GetMapping("/facultyByStudentId/{studentId}")
+    public FacultyDTO getFacultyByStudentId(@PathVariable Long studentId) {
+        return studentService.getFacultyByStudentId(studentId);
     }
 
     @PutMapping("/update/{studentId}")
-    public ResponseEntity<Student> updateStudent(@PathVariable Long studentId, @RequestBody Student student) {
-        return ResponseEntity.ok(studentService.updateStudent(studentId, student));
+    public StudentDTO updateStudent(@PathVariable Long studentId, @RequestBody StudentDTO studentDTO) {
+        return studentService.updateStudent(studentId, studentDTO);
     }
 
-    @DeleteMapping("{studentId}")
-    public ResponseEntity<String> deleteStudent(@PathVariable Long studentId) {
+    @DeleteMapping("/{studentId}")
+    public void deleteStudent(@PathVariable Long studentId) {
         studentService.deleteStudent(studentId);
-        return ResponseEntity.ok().body("Студент с айди " + studentId + " удален");
     }
-
 }
