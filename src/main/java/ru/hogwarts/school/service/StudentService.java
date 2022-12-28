@@ -1,12 +1,12 @@
 package ru.hogwarts.school.service;
 
 import org.springframework.stereotype.Service;
-import ru.hogwarts.school.exceptions.StudentNotFoundException;
-import ru.hogwarts.school.model.Faculty;
+import ru.hogwarts.school.exceptions.ObjectNotFoundException;
 import ru.hogwarts.school.model.Student;
 import ru.hogwarts.school.repository.StudentRepository;
 
 import java.util.Collection;
+import java.util.Set;
 
 @Service
 public class StudentService {
@@ -22,13 +22,13 @@ public class StudentService {
 
     public Student getStudent(Long studentId) {
         return this.studentRepository.findById(studentId)
-                .orElseThrow(StudentNotFoundException::new);
+                .orElseThrow(ObjectNotFoundException::new);
 
     }
 
     public Student updateStudent(Long studentId, Student student) {
         Student dbStudent =
-                this.studentRepository.findById(studentId).orElseThrow(StudentNotFoundException::new);
+                this.studentRepository.findById(studentId).orElseThrow(ObjectNotFoundException::new);
         dbStudent.setName(student.getName());
         dbStudent.setAge(student.getAge());
         return this.studentRepository.save(dbStudent);

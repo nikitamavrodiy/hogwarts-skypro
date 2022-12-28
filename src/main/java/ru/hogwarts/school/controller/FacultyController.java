@@ -2,13 +2,12 @@ package ru.hogwarts.school.controller;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.hogwarts.school.exceptions.FacultyNotFoundException;
+import ru.hogwarts.school.exceptions.ObjectNotFoundException;
 import ru.hogwarts.school.model.Faculty;
 import ru.hogwarts.school.model.Student;
 import ru.hogwarts.school.service.FacultyService;
 
 import java.util.Collection;
-import java.util.Set;
 
 @RestController
 @RequestMapping("/faculty")
@@ -19,7 +18,7 @@ public class FacultyController {
         this.facultyService = facultyService;
     }
 
-    @ExceptionHandler(FacultyNotFoundException.class)
+    @ExceptionHandler(ObjectNotFoundException.class)
     public ResponseEntity<String> handleException() {
         return ResponseEntity.badRequest().body("Факультетов с заданными параметрами не найдено");
     }
