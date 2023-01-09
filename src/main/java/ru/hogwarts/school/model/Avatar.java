@@ -15,8 +15,21 @@ public class Avatar {
     @Lob
     private byte[] data;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     private Student student;
+
+    public Avatar() {
+
+    }
+
+    public Avatar(Long id, String filePath, long fileSize, String mediaType, byte[] data, Student student) {
+        this.id = id;
+        this.filePath = filePath;
+        this.fileSize = fileSize;
+        this.mediaType = mediaType;
+        this.data = data;
+        this.student = student;
+    }
 
     public Long getId() {
         return id;

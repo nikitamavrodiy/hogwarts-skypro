@@ -66,4 +66,17 @@ public class StudentService {
     public FacultyDTO getFacultyByStudentId(Long studentId) {
         return FacultyMapper.toDto(this.studentRepository.getReferenceById(studentId).getFaculty());
     }
+
+    public Integer getAllStudentsAmount() {
+        return this.studentRepository.getStudentsAmount();
+    }
+
+    public Integer getStudentsAgeAverage() {
+        return this.studentRepository.getStudentsAgeAverage();
+    }
+
+    public Collection<StudentDTO> getLastFiveStudents() {
+        return this.studentRepository.getLastFiveStudents()
+                .stream().map(StudentMapper::toDto).collect(Collectors.toList());
+    }
 }
