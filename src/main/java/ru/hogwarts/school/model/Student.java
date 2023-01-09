@@ -14,7 +14,7 @@ public class Student {
     private int age;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "faculty_id", nullable = false)
+    @JoinColumn(name = "faculty_id", nullable = true)
     @JsonBackReference
     private Faculty faculty;
 
