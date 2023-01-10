@@ -5,7 +5,8 @@ import javax.persistence.*;
 @Entity
 public class Avatar {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "id")
     private Long id;
 
     private String filePath;
@@ -15,7 +16,11 @@ public class Avatar {
     @Lob
     private byte[] data;
 
+//    @OneToOne
+//    @MapsId
+//    @JoinColumn(name = "student_id")
     @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "student_id", referencedColumnName = "id")
     private Student student;
 
     public Avatar() {
