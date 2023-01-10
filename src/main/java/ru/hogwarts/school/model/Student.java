@@ -18,6 +18,11 @@ public class Student {
     @JsonBackReference
     private Faculty faculty;
 
+    @OneToOne(fetch = FetchType.LAZY, mappedBy = "student", cascade = CascadeType.ALL)
+    @PrimaryKeyJoinColumn
+    private Avatar avatar;
+
+
     public Student() {
     }
 
