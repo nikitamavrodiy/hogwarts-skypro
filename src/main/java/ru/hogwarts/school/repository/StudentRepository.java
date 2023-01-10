@@ -1,8 +1,10 @@
 package ru.hogwarts.school.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 import ru.hogwarts.school.dto.StudentDTO;
 import ru.hogwarts.school.model.Student;
 
@@ -23,4 +25,10 @@ public interface StudentRepository extends JpaRepository<Student, Long> {
 
     @Query(value = "SELECT * FROM student ORDER BY id DESC LIMIT 5", nativeQuery = true)
     List<Student> getLastFiveStudents();
+
+    @Transactional
+    @Modifying(clearAutomatically = true)
+    @Query(value = "UPDATE student SET faculty_id = ?2 WHERE id = ?1", nativeQuery = true)
+    void putFacultyStudent(Long studentId, Long facultyId);
+
 }
