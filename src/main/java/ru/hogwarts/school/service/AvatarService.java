@@ -5,10 +5,11 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
-import ru.hogwarts.school.mapper.StudentMapper;
+import ru.hogwarts.school.exceptions.ObjectNotFoundException;
 import ru.hogwarts.school.model.Avatar;
 import ru.hogwarts.school.model.Student;
 import ru.hogwarts.school.repository.AvatarRepository;
+import ru.hogwarts.school.repository.StudentRepository;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -27,16 +28,15 @@ public class AvatarService {
     private String avatarsDir;
 
     private final AvatarRepository avatarRepository;
-    private final StudentService studentService;
+    private final StudentRepository studentRepository;
 
-    public AvatarService(AvatarRepository avatarRepository, StudentService studentService) {
+    public AvatarService(AvatarRepository avatarRepository, StudentRepository studentRepository) {
         this.avatarRepository = avatarRepository;
-        this.studentService = studentService;
+        this.studentRepository = studentRepository;
     }
 
     public void uploadAvatar(Long studentId, MultipartFile avatarFile) throws IOException {
-        Student student = StudentMapper.toEntity(studentService.getStudent(studentId));
-
+        Student student = studentRepository.findById(studentId).orElseThrow(ObjectNotFoundException::new);
         Path filePath = Path.of(avatarsDir, studentId + "." + getExtensions(avatarFile.getOriginalFilename()));
         Files.createDirectories(filePath.getParent());
         Files.deleteIfExists(filePath);
@@ -87,7 +87,7 @@ public class AvatarService {
     }
 
     public Collection<Avatar> getPage(Integer pageNumber, Integer pageSize) {
-        PageRequest pageRequest = PageRequest.of(pageNumber -1, pageSize);
+        PageRequest pageRequest = PageRequest.of(pageNumber - 1, pageSize);
         return avatarRepository.findAll(pageRequest).getContent();
     }
 }

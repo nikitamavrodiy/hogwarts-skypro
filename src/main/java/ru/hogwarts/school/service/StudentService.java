@@ -1,5 +1,6 @@
 package ru.hogwarts.school.service;
 
+import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -8,12 +9,11 @@ import ru.hogwarts.school.dto.StudentDTO;
 import ru.hogwarts.school.exceptions.ObjectNotFoundException;
 import ru.hogwarts.school.mapper.FacultyMapper;
 import ru.hogwarts.school.mapper.StudentMapper;
-import ru.hogwarts.school.model.Faculty;
+import ru.hogwarts.school.model.Avatar;
 import ru.hogwarts.school.model.Student;
 import ru.hogwarts.school.repository.StudentRepository;
 
 import java.util.Collection;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -39,7 +39,7 @@ public class StudentService {
                 this.studentRepository.findById(studentId).orElseThrow(ObjectNotFoundException::new);
         dbStudent.setName(studentDTO.getName());
         dbStudent.setAge(studentDTO.getAge());
-        return StudentMapper.toDto(this.studentRepository.save(StudentMapper.toEntity(studentDTO)));
+        return StudentMapper.toDto(this.studentRepository.save(dbStudent));
     }
 
     public void deleteStudent(Long studentId) {
@@ -78,5 +78,11 @@ public class StudentService {
     public Collection<StudentDTO> getLastFiveStudents() {
         return this.studentRepository.getLastFiveStudents()
                 .stream().map(StudentMapper::toDto).collect(Collectors.toList());
+    }
+
+    public StudentDTO putFacultyStudent(Long studentId, Long facultyId) {
+        this.studentRepository.putFacultyStudent(studentId, facultyId);
+        return new StudentMapper().toDto(this.studentRepository.findById(studentId)
+                .orElseThrow(ObjectNotFoundException::new));
     }
 }

@@ -1,20 +1,13 @@
 package ru.hogwarts.school.controller;
 
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import ru.hogwarts.school.dto.FacultyDTO;
 import ru.hogwarts.school.dto.StudentDTO;
-import ru.hogwarts.school.model.Faculty;
-import ru.hogwarts.school.model.Student;
 import ru.hogwarts.school.service.StudentService;
 
 import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
 
 @RestController
 @RequestMapping("/student")
@@ -83,5 +76,12 @@ public class StudentController {
     @GetMapping("/last-five-students")
     public Collection<StudentDTO> getLastFiveStudents() {
         return studentService.getLastFiveStudents();
+    }
+
+    @PutMapping(value = "/set-faculty", params = {"studentId", "facultyId"})
+    public StudentDTO putFacultyStudent(
+            @RequestParam(required = false) Long studentId,
+            @RequestParam(required = false) Long facultyId) {
+        return studentService.putFacultyStudent(studentId, facultyId);
     }
 }
